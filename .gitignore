@@ -1,0 +1,26 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# --- IDE ---
+.vscode/
+.idea/
+
+# --- ОС ---
+.DS_Store
+Thumbs.db
+
+# --- Результаты работы программы ---
+data/processed/*
+!data/processed/.gitkeep
+*.log
+logs/
+
+# --- Входящие письма ---
+data/inbox/*
+!data/inbox/.gitkeep
