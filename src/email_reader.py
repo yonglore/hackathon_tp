@@ -12,10 +12,11 @@ def read_all(inbox_dir: Path) -> list[Email]:
     """Прочитать все письма из inbox_dir и вернуть список Emails."""
 
     emails = []
-
+    # проверка существует ли
     if not inbox_dir.exists() or not inbox_dir.is_dir():
         return emails
 
+    # обход файлов и чтение
     for path in inbox_dir.iterdir():
         if path.is_file():
             try:
@@ -32,6 +33,7 @@ def read_one(path: Path) -> Email:
 
     raw_content = ""
 
+    # перебор кодировок
     for enc in ['utf-8', 'cp1251', 'latin-1']:
         try:
             raw_content = path.read_text(encoding=enc)
@@ -40,26 +42,31 @@ def read_one(path: Path) -> Email:
         except Exception:
             continue
     else:
+        # запасное чтение поврежденного файла или обработка ошибки доступа
         try:
             raw_content = path.read_text(encoding='utf-8', errors='replace')
         except Exception:
             return Email(str(path), "Unknown", "Error", "Файл поврежден", "", is_readable=False)
 
+    # проверка файла на пустоту
     if not raw_content.strip():
         return Email(str(path), "Unknown", "Empty", "Файл пуст", "", is_readable=False)
 
     lines = raw_content.splitlines()
 
+    # извлечение отправителя: From
     if len(lines) > 0:
         sender = lines[0].replace("From:", "").strip()
     else:
         sender = "Unknown"
 
+    # извлечение темы: Subject
     if len(lines) > 1:
         subject = lines[1].replace("Subject:", "").strip()
     else:
         subject = "No Subject"
 
+    # извлечение тела письма: Body
     if len(lines) > 2:
         body = "\n".join(lines[2:]).strip()
     else:
