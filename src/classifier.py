@@ -1,32 +1,41 @@
-"""Классификация писем по категориям на основе собственных правил.
+"""Классификация писем по категориям"""
 
-(критерий 2) + устойчивость классификации (критерий 1).
-TODO: реализовать
-"""
-
+from .config import CATEGORIES, DEFAULT_CATEGORY, UNREADABLE_CATEGORY
 from .models import Email
 
 
 class Classifier:
-    """Классификатор писем по правилам.
+    """Классификатор писем по ключевым словам"""
 
-    TODO:
-        - хранить правила/ключевые слова по категориям
-          (правила вынести в config.py, чтобы менять без правки кода);
-        - метод classify должен ВСЕГДА возвращать категорию даже
-          для писем, не подошедших ни под одно правило.
-    """
 
     def __init__(self, rules=None) -> None:
-        # TODO: принять/загрузить правила
-        raise NotImplementedError
+        # если правила не передали берем основные из config.py
+        if rules is None:
+            self.rules = CATEGORIES
+        else:
+            self.rules = rules
+
 
     def classify(self, email: Email) -> str:
-        """Вернуть имя категории для письма.
+        """Вернуть категорию письма"""
 
-        TODO:
-            - применить правила к содержимому письма;
-            - если совпадений нет — вернуть fallback-категорию (например "other"/"unknown");
-            - продумать, что появление нового типа обращений не ломает систему.
-        """
-        raise NotImplementedError
+        try:
+            # плохие файлы сразу кидаем в отдельную категорию
+            if not email.is_readable:
+                return UNREADABLE_CATEGORY
+
+            text = email.text_for_classification()
+
+            for category, keywords in self.rules.items():
+                # эти категории нужны как запасные варианты
+                if category in (DEFAULT_CATEGORY, UNREADABLE_CATEGORY):
+                    continue
+                for keyword in keywords:
+                    keyword = keyword.lower()
+                    if keyword in text:
+                        return category
+            return DEFAULT_CATEGORY
+
+        except Exception:
+            # если что то сломалось просто отправляем письмо в undefined
+            return DEFAULT_CATEGORY

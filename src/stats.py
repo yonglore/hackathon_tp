@@ -1,33 +1,43 @@
-"""Сбор статистики по результатам обработки.
+"""Сбор статистики по результатам обработки"""
 
-Данные отсюда используются в итоговом выводе и могут лечь в основу расширения
-(отчёт/визуализация — критерий 7).
-
-TODO: реализовать.
-"""
+from collections import Counter
+from pathlib import Path
 
 
 class Statistics:
-    """Накопитель статистики за один запуск.
-
-    TODO:
-        - считать обработанные письма по категориям;
-        - считать ошибки/нечитаемые файлы;
-        - метод summary() возвращает сводку для вывода в консоль/лог.
-    """
+    """Считает сколько писем попало в каждую категорию"""
 
     def __init__(self) -> None:
-        # TODO: инициализировать счётчики
-        raise NotImplementedError
+        self.counts = Counter()
+        self.errors = []
+
 
     def record(self, category: str) -> None:
-        """Учесть одно обработанное письмо. TODO."""
-        raise NotImplementedError
+        """Учесть одно обработанное письмо"""
+
+        # если категория почему то пустая
+        if not category:
+            category = "undefined"
+        self.counts[category] += 1
+
 
     def record_error(self, path) -> None:
-        """Учесть один проблемный файл. TODO."""
-        raise NotImplementedError
+        """Учесть один проблемный файл"""
+
+        self.errors.append(Path(path))
+
 
     def summary(self) -> str:
-        """Вернуть текстовую сводку. TODO."""
-        raise NotImplementedError
+        """Вернуть текстовую сводку"""
+
+        lines = ["=== Результаты обработки ==="]
+        total = sum(self.counts.values())
+        lines.append(f"Всего обработано: {total} писем")
+
+        # сначала выводим самые частые категории
+        for category, count in self.counts.most_common():
+            lines.append(f"  {category}: {count}")
+        lines.append(f"Ошибок: {len(self.errors)}")
+        for path in self.errors:
+            lines.append(f"  - {path.name}")
+        return "\n".join(lines)
