@@ -7,14 +7,14 @@ def test_read_valid_email(tmpdir):
     file_path = os.path.join(str(tmpdir), "valid.txt")
 
     with open(file_path, "w", encoding="utf-8") as f:
-        f.write("From: ivan@example.com\nSubject: Hello\nBody text here")
+        f.write("From: test@hse.ru\nSubject: Привет\nТест текст тут")
 
     email = read_one(file_path)
 
     assert email.is_readable is True
-    assert email.sender == "ivan@example.com"
-    assert email.subject == "Hello"
-    assert email.body == "Body text here"
+    assert email.sender == "test@hse.ru"
+    assert email.subject == "Привет"
+    assert email.body == "Тест текст тут"
 
 
 def test_read_empty_email(tmpdir):
@@ -41,3 +41,15 @@ def test_read_all_folder(tmpdir):
     emails = read_all(str(tmpdir))
 
     assert len(emails) == 2
+
+
+def test_read_invalid_format_jpeg(tmpdir):
+    file_path = os.path.join(str(tmpdir), "picture.jpeg")
+
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write("From: test@hse.ru\nSubject: Картинка\nТут текст")
+
+    email = read_one(file_path)
+
+    assert email.is_readable is False
+    assert email.subject == "Invalid Format"
