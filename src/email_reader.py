@@ -12,6 +12,7 @@ def read_all(inbox_dir: Path) -> list[Email]:
     """Прочитать все письма из inbox_dir и вернуть список Emails."""
 
     emails = []
+    inbox_dir = Path(inbox_dir)
     # проверка существует ли
     if not inbox_dir.exists() or not inbox_dir.is_dir():
         return emails
@@ -30,6 +31,8 @@ def read_all(inbox_dir: Path) -> list[Email]:
 
 def read_one(path: Path) -> Email:
     """Прочитать одно письмо"""
+
+    path = Path(path)
 
     raw_content = ""
 

@@ -1,6 +1,6 @@
 import os
-from file_organizer import organize
-from models import Email
+from src.file_organizer import organize
+from src.models import Email
 
 
 def test_organize_moves_file(tmpdir):

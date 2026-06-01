@@ -1,6 +1,6 @@
 import os
-from email_reader import read_one, read_all
-from models import Email
+from src.email_reader import read_one, read_all
+from src.models import Email
 
 
 def test_read_valid_email(tmpdir):

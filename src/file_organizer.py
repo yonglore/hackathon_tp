@@ -11,6 +11,7 @@ def organize(email: Email, category: str, out_dir: Path) -> Path:
     """Переместить файл письма в out_dir/<category>/ и вернуть новый путь."""
 
     try:
+        out_dir = Path(out_dir)
         # проверка сущетсвет ли
         src_path = Path(email.path)
         if not src_path.exists():

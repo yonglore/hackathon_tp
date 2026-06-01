@@ -2,8 +2,7 @@
 # Скрипт запуска приложения MailSort.
 # Критерий 4 (bash): должен запускать приложение И реализовывать
 # конструкции помимо вызова python — проверка существования папки
-# inbox, вывод итогового статуса, перенаправление вывода в лог-файл.
-
+# inbox, создание выходных папок, вывод итогового статуса по коду возврата.
 
 set -uo pipefail
 
@@ -11,7 +10,7 @@ INBOX="data/inbox"
 OUT="data/processed"
 LOG_DIR="logs"
 LOG="$LOG_DIR/run.log"
-PYTHON_BIN="${PYTHON_BIN:-python3}"
+PYTHON_BIN="${PYTHON_BIN:-py}"
 
 # Без входной папки приложение не сможет найти письма для сортировки
 if [ ! -d "$INBOX" ]; then
@@ -24,7 +23,7 @@ mkdir -p "$OUT"
 mkdir -p "$LOG_DIR"
 
 # Запускаем приложение и сохраняем подробный вывод в лог
-"$PYTHON_BIN" -m src.main --inbox "$INBOX" --out "$OUT" --log "$LOG" > "$LOG" 2>&1
+"$PYTHON_BIN" -m src.main --inbox "$INBOX" --out "$OUT" --log "$LOG"
 EXIT_CODE=$?
 
 # По коду возврата выводим понятный итоговый статус
